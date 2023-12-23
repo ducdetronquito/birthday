@@ -1,3 +1,5 @@
+use anyhow::Result;
+use birthday::{add_birthday, Birthday};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
@@ -29,7 +31,24 @@ enum Command {
     Today {},
 }
 
-fn main() {
-    let args = Cli::parse();
-    println!("You ran cli with: {:?}", args);
+fn print_birthdays(birthdays: Vec<Birthday>) {
+    for birthday in birthdays {
+        println!("{:?}", birthday);
+    }
+}
+
+fn main() -> Result<()> {
+    let cli = Cli::parse();
+    println!("You ran cli with: {:?}", cli);
+    match cli.command {
+        Command::Add { name, date } => birthday::add_birthday(name, date),
+        Command::All {} => {
+            let birthdays = birthday::get_all_birthdays()?;
+            print_birthdays(birthdays);
+            Ok(())
+        }
+        Command::Next {} => todo!(),
+        Command::Search { name, date } => todo!(),
+        Command::Today {} => todo!(),
+    }
 }
