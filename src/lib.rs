@@ -25,10 +25,15 @@ pub fn add_birthday(name: String, date: String) -> Result<()> {
     Ok(())
 }
 
-#[derive(Debug)]
 pub struct Birthday {
-    name: String,
-    date: NaiveDate,
+    pub name: String,
+    pub date: NaiveDate,
+}
+
+impl Birthday {
+    pub fn age(&self, today: NaiveDate) -> Option<u32> {
+        today.years_since(self.date)
+    }
 }
 
 pub fn get_all_birthdays() -> Result<Vec<Birthday>> {

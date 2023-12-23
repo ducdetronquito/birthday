@@ -1,5 +1,6 @@
 use anyhow::Result;
-use birthday::{add_birthday, Birthday};
+use birthday::Birthday;
+use chrono::Utc;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
@@ -31,12 +32,6 @@ enum Command {
     Today {},
 }
 
-fn print_birthdays(birthdays: Vec<Birthday>) {
-    for birthday in birthdays {
-        println!("{:?}", birthday);
-    }
-}
-
 fn main() -> Result<()> {
     let cli = Cli::parse();
     println!("You ran cli with: {:?}", cli);
@@ -50,5 +45,19 @@ fn main() -> Result<()> {
         Command::Next {} => todo!(),
         Command::Search { name, date } => todo!(),
         Command::Today {} => todo!(),
+    }
+}
+
+fn print_birthdays(birthdays: Vec<Birthday>) {
+    let today = Utc::now().date_naive();
+    for birthday in birthdays {
+        let age = match birthday.age(today) {
+            Some(age) => age.to_string(),
+            None => "".to_owned(),
+        };
+        println!(
+            "Name={} Birthdate={} Age={}",
+            birthday.name, birthday.date, age
+        );
     }
 }
