@@ -24,6 +24,16 @@ impl Birthday {
     pub fn age(&self, today: NaiveDate) -> Option<u32> {
         today.years_since(self.date)
     }
+
+    pub fn next(&self, today: NaiveDate) -> NaiveDate {
+        let birthday_this_year = self.date.with_year(today.year()).unwrap();
+        let birthday_next_year = self.date.with_year(today.year() + 1).unwrap();
+        if birthday_this_year > today {
+            birthday_this_year
+        } else {
+            birthday_next_year
+        }
+    }
 }
 
 fn to_timestamp(date: NaiveDate) -> i64 {
@@ -68,4 +78,10 @@ pub fn get_birthdays_for_date(date: NaiveDate) -> Result<Vec<Birthday>> {
         })
         .collect();
     Ok(birthdays)
+}
+
+pub fn get_next_birthday(today: NaiveDate) -> Result<Option<Birthday>> {
+    let mut birthdays = get_all_birthdays()?;
+    birthdays.sort_by_key(|birthday| birthday.next(today));
+    Ok(birthdays.into_iter().next())
 }

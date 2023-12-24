@@ -42,7 +42,14 @@ fn main() -> Result<()> {
             print_birthdays(birthdays);
             Ok(())
         }
-        Command::Next {} => todo!(),
+        Command::Next {} => {
+            let today = Utc::now().date_naive();
+            let maybe_birthday = birthday::get_next_birthday(today)?;
+            if let Some(birthday) = maybe_birthday {
+                print_birthdays(vec![birthday]);
+            }
+            Ok(())
+        }
         Command::Search { .. } => todo!(),
         Command::Today {} => {
             let today = Utc::now().date_naive();
