@@ -43,7 +43,7 @@ fn main() -> Result<()> {
             Ok(())
         }
         Command::Next {} => todo!(),
-        Command::Search { name, date } => todo!(),
+        Command::Search { .. } => todo!(),
         Command::Today {} => todo!(),
     }
 }
