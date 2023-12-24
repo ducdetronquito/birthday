@@ -44,7 +44,12 @@ fn main() -> Result<()> {
         }
         Command::Next {} => todo!(),
         Command::Search { .. } => todo!(),
-        Command::Today {} => todo!(),
+        Command::Today {} => {
+            let today = Utc::now().date_naive();
+            let birthdays = birthday::get_birthdays_for_date(today)?;
+            print_birthdays(birthdays);
+            Ok(())
+        }
     }
 }
 

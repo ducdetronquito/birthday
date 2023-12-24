@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use rusqlite::Connection;
 
 fn get_db() -> Result<Connection> {
@@ -58,4 +58,14 @@ pub fn get_all_birthdays() -> Result<Vec<Birthday>> {
     })?;
     let birthdays: Result<Vec<Birthday>, rusqlite::Error> = birthday_iter.collect();
     Ok(birthdays.unwrap())
+}
+
+pub fn get_birthdays_for_date(date: NaiveDate) -> Result<Vec<Birthday>> {
+    let birthdays = get_all_birthdays()?
+        .into_iter()
+        .filter(|birthday| {
+            birthday.date.month() == date.month() && birthday.date.day() == date.day()
+        })
+        .collect();
+    Ok(birthdays)
 }
