@@ -25,8 +25,12 @@ enum Command {
     Search {
         #[arg(short, long, help = "match for names containing <NAME>")]
         name: Option<String>,
-        #[arg(short, long, help = "match for a specific <DATE>")]
-        date: Option<String>,
+        #[arg(short, long, help = "match for a specific <YEAR>")]
+        year: Option<i32>,
+        #[arg(short, long, help = "match for a specific <MONTH>")]
+        month: Option<u32>,
+        #[arg(short, long, help = "match for a specific <DAY>")]
+        day: Option<u32>,
     },
     #[command(about = "Show today's birthdays")]
     Today {},
@@ -50,7 +54,16 @@ fn main() -> Result<()> {
             }
             Ok(())
         }
-        Command::Search { .. } => todo!(),
+        Command::Search {
+            name,
+            year,
+            month,
+            day,
+        } => {
+            let birthdays = birthday::search_birthdays(name, year, month, day)?;
+            print_birthdays(birthdays);
+            Ok(())
+        }
         Command::Today {} => {
             let today = Utc::now().date_naive();
             let birthdays = birthday::get_birthdays_for_date(today)?;

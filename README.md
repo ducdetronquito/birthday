@@ -28,7 +28,15 @@ Ben Dover  03/05/1990 34yo
 $ birthday search --name Ben
 Ben Dover  03/05/1990 34yo
 
-# Get all birthdays for a specific day and month
-$ birthday search --date 22/09
+# Get all birthdays for a specific year
+$ birthday search --year 1987
 Anita Bath 22/09/1987 37yo
+
+# Get all birthdays for a specific month
+$ birthday search --month 12
+Hugh Jarse 10/12/1995 39yo
+
+# Get all birthdays for a specific day
+$ birthday search --month 3
+Ben Dover  03/05/1990 34yo
 ```

@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use rusqlite::Connection;
 
@@ -84,4 +84,37 @@ pub fn get_next_birthday(today: NaiveDate) -> Result<Option<Birthday>> {
     let mut birthdays = get_all_birthdays()?;
     birthdays.sort_by_key(|birthday| birthday.next(today));
     Ok(birthdays.into_iter().next())
+}
+
+pub fn search_birthdays(
+    name: Option<String>,
+    year: Option<i32>,
+    month: Option<u32>,
+    day: Option<u32>,
+) -> Result<Vec<Birthday>> {
+    let mut birthdays = get_all_birthdays()?;
+
+    if let Some(name) = name {
+        birthdays.retain(|birthday| birthday.name.contains(&name));
+    }
+
+    if let Some(year) = year {
+        birthdays.retain(|birthday| birthday.date.year() == year);
+    }
+
+    if let Some(month) = month {
+        if !(1..=12).contains(&month) {
+            bail!("Month must be between 1 and 12");
+        }
+        birthdays.retain(|birthday| birthday.date.month() == month);
+    }
+
+    if let Some(day) = day {
+        if !(1..=31).contains(&day) {
+            bail!("Month must be between 1 and 31");
+        }
+        birthdays.retain(|birthday| birthday.date.day() == day);
+    }
+
+    Ok(birthdays)
 }
