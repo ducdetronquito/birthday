@@ -1,6 +1,6 @@
 use anyhow::Result;
 use birthday::Birthday;
-use chrono::Utc;
+use chrono::{Datelike, Utc};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
@@ -66,7 +66,12 @@ fn main() -> Result<()> {
         }
         Command::Today {} => {
             let today = Utc::now().date_naive();
-            let birthdays = birthday::get_birthdays_for_date(today)?;
+            let birthdays = birthday::search_birthdays(
+                None,
+                Some(today.year()),
+                Some(today.month()),
+                Some(today.day()),
+            )?;
             print_birthdays(birthdays);
             Ok(())
         }

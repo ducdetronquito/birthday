@@ -70,16 +70,6 @@ pub fn get_all_birthdays() -> Result<Vec<Birthday>> {
     Ok(birthdays.unwrap())
 }
 
-pub fn get_birthdays_for_date(date: NaiveDate) -> Result<Vec<Birthday>> {
-    let birthdays = get_all_birthdays()?
-        .into_iter()
-        .filter(|birthday| {
-            birthday.date.month() == date.month() && birthday.date.day() == date.day()
-        })
-        .collect();
-    Ok(birthdays)
-}
-
 pub fn get_next_birthday(today: NaiveDate) -> Result<Option<Birthday>> {
     let mut birthdays = get_all_birthdays()?;
     birthdays.sort_by_key(|birthday| birthday.next(today));
