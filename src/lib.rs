@@ -16,6 +16,7 @@ fn get_db() -> Result<Connection> {
 }
 
 pub struct Birthday {
+    pub id: i32,
     pub name: String,
     pub date: NaiveDate,
 }
@@ -59,12 +60,13 @@ pub fn add_birthday(name: String, date: String) -> Result<()> {
 
 pub fn get_all_birthdays() -> Result<Vec<Birthday>> {
     let db = get_db()?;
-    let mut statement = db.prepare("SELECT name, date_timestamp FROM birthdays")?;
+    let mut statement = db.prepare("SELECT id, name, date_timestamp FROM birthdays")?;
     let birthday_iter = statement.query_map([], |row| {
-        let name = row.get(0)?;
-        let timestamp = row.get(1)?;
+        let id = row.get(0)?;
+        let name = row.get(1)?;
+        let timestamp = row.get(2)?;
         let date = from_timestamp(timestamp);
-        Ok(Birthday { name, date })
+        Ok(Birthday { id, name, date })
     })?;
     let birthdays: Result<Vec<Birthday>, rusqlite::Error> = birthday_iter.collect();
     Ok(birthdays.unwrap())
