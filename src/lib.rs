@@ -1,6 +1,8 @@
 use anyhow::{bail, Result};
+pub use birthday::Birthday;
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use rusqlite::Connection;
+mod birthday;
 
 fn get_db() -> Result<Connection> {
     let db = Connection::open("test.db")?;
@@ -13,28 +15,6 @@ fn get_db() -> Result<Connection> {
         (),
     )?;
     Ok(db)
-}
-
-pub struct Birthday {
-    pub id: i32,
-    pub name: String,
-    pub date: NaiveDate,
-}
-
-impl Birthday {
-    pub fn age(&self, today: NaiveDate) -> Option<u32> {
-        today.years_since(self.date)
-    }
-
-    pub fn next(&self, today: NaiveDate) -> NaiveDate {
-        let birthday_this_year = self.date.with_year(today.year()).unwrap();
-        let birthday_next_year = self.date.with_year(today.year() + 1).unwrap();
-        if birthday_this_year > today {
-            birthday_this_year
-        } else {
-            birthday_next_year
-        }
-    }
 }
 
 fn to_timestamp(date: NaiveDate) -> i64 {
