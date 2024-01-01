@@ -1,5 +1,6 @@
 use chrono::{Datelike, NaiveDate};
 
+#[derive(Clone)]
 pub struct Birthday {
     pub id: i32,
     pub name: String,

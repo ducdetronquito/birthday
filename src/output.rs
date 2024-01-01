@@ -46,7 +46,7 @@ impl DisplayedBirthday {
 
 pub fn output(birthdays: Vec<Birthday>, today: NaiveDate) {
     if birthdays.is_empty() {
-        println!("No birthday found 🔎");
+        no_birthday_found();
         return;
     }
     let mut displayed_birthdays: Vec<DisplayedBirthday> = birthdays
@@ -58,4 +58,12 @@ pub fn output(birthdays: Vec<Birthday>, today: NaiveDate) {
         .with(Style::rounded())
         .to_string();
     println!("{table}")
+}
+
+pub fn no_birthday_found() {
+    println!("No birthday found 🔎");
+}
+
+pub fn birthday_forgotten(birthday: Birthday) {
+    println!("Birthday of '{}' has been forgotten 🗑️", birthday.name)
 }

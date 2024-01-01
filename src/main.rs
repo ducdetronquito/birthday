@@ -34,6 +34,8 @@ enum Command {
     },
     #[command(about = "Show today's birthdays")]
     Today {},
+    #[command(about = "Forget a birthday by ID")]
+    Forget { id: i32 },
 }
 
 fn main() -> Result<()> {
@@ -72,6 +74,14 @@ fn main() -> Result<()> {
                 Some(today.day()),
             )?;
             output::output(birthdays, today);
+            Ok(())
+        }
+        Command::Forget { id } => {
+            let maybe_birthday = birthday::forget(id)?;
+            match maybe_birthday {
+                Some(birthday) => output::birthday_forgotten(birthday),
+                None => output::no_birthday_found(),
+            }
             Ok(())
         }
     }

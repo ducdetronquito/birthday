@@ -25,8 +25,27 @@ pub fn get_all() -> Result<Vec<Birthday>> {
         let date = from_timestamp(timestamp);
         Ok(Birthday { id, name, date })
     })?;
-    let birthdays: Result<Vec<Birthday>, rusqlite::Error> = birthday_iter.collect();
-    Ok(birthdays.unwrap())
+    let birthdays = birthday_iter.collect::<Result<Vec<Birthday>, rusqlite::Error>>()?;
+    Ok(birthdays)
+}
+
+pub fn remove(id: i32) -> Result<Option<Birthday>> {
+    let db = get_db()?;
+    let mut statement =
+        db.prepare("DELETE FROM birthdays WHERE id = :id RETURNING id, name, date_timestamp")?;
+    let birthday_iter = statement.query_map(&[(":id", id.to_string().as_str())], |row| {
+        let id = row.get(0)?;
+        let name = row.get(1)?;
+        let timestamp = row.get(2)?;
+        let date = from_timestamp(timestamp);
+        Ok(Birthday { id, name, date })
+    })?;
+    let birthdays = birthday_iter.collect::<Result<Vec<Birthday>, rusqlite::Error>>()?;
+    if birthdays.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(birthdays[0].clone()))
+    }
 }
 
 fn get_db() -> Result<Connection> {

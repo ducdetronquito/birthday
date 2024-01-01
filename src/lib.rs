@@ -50,3 +50,7 @@ pub fn search(
 
     Ok(birthdays)
 }
+
+pub fn forget(id: i32) -> Result<Option<Birthday>> {
+    birthday_store::remove(id)
+}
