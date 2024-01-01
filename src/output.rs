@@ -14,20 +14,24 @@ struct DisplayedBirthday {
     age: String,
     #[tabled(rename = "Next birthday")]
     next_birthday: String,
+
+    #[tabled(skip)]
+    next_birthday_in_days: i64,
 }
 
 impl DisplayedBirthday {
     fn from_birthday(birthday: &Birthday, today: NaiveDate) -> DisplayedBirthday {
         let age = birthday.age(today).unwrap();
         let birthyear = birthday.date.year();
-        let next_birthday_in_days = (birthday.next(today) - today).num_days();
-        let next_birthday = if birthday.is_today(today) {
-            "today".to_string()
+        let next_birthday_in_days = if birthday.is_today(today) {
+            0
         } else {
-            match next_birthday_in_days {
-                1 => "1 day".to_string(),
-                _ => format!("{next_birthday_in_days} days"),
-            }
+            (birthday.next(today) - today).num_days()
+        };
+        let next_birthday = match next_birthday_in_days {
+            0 => "today 🎂".to_string(),
+            1 => "1 day".to_string(),
+            _ => format!("{next_birthday_in_days} days"),
         };
         DisplayedBirthday {
             id: birthday.id,
@@ -35,15 +39,17 @@ impl DisplayedBirthday {
             birthday: birthday.date.format("%d %B").to_string(),
             age: format!("{age} ({birthyear})"),
             next_birthday,
+            next_birthday_in_days,
         }
     }
 }
 
 pub fn output(birthdays: Vec<Birthday>, today: NaiveDate) {
-    let displayed_birthdays: Vec<DisplayedBirthday> = birthdays
+    let mut displayed_birthdays: Vec<DisplayedBirthday> = birthdays
         .iter()
         .map(|birthday| DisplayedBirthday::from_birthday(birthday, today))
         .collect();
+    displayed_birthdays.sort_by_key(|birthday| birthday.next_birthday_in_days);
     let table = Table::new(displayed_birthdays)
         .with(Style::rounded())
         .to_string();
