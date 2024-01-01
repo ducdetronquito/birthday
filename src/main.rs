@@ -40,15 +40,15 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     println!("You ran cli with: {:?}", cli);
     match cli.command {
-        Command::Add { name, date } => birthday::add_birthday(name, date),
+        Command::Add { name, date } => birthday::add(name, date),
         Command::All {} => {
-            let birthdays = birthday::get_all_birthdays()?;
+            let birthdays = birthday::get_all()?;
             print_birthdays(birthdays);
             Ok(())
         }
         Command::Next {} => {
             let today = Utc::now().date_naive();
-            let maybe_birthday = birthday::get_next_birthday(today)?;
+            let maybe_birthday = birthday::get_next(today)?;
             if let Some(birthday) = maybe_birthday {
                 print_birthdays(vec![birthday]);
             }
@@ -60,13 +60,13 @@ fn main() -> Result<()> {
             month,
             day,
         } => {
-            let birthdays = birthday::search_birthdays(name, year, month, day)?;
+            let birthdays = birthday::search(name, year, month, day)?;
             print_birthdays(birthdays);
             Ok(())
         }
         Command::Today {} => {
             let today = Utc::now().date_naive();
-            let birthdays = birthday::search_birthdays(
+            let birthdays = birthday::search(
                 None,
                 Some(today.year()),
                 Some(today.month()),

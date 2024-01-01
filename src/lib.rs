@@ -1,70 +1,30 @@
+mod birthday;
+mod birthday_store;
 use anyhow::{bail, Result};
 pub use birthday::Birthday;
-use chrono::{Datelike, NaiveDate, NaiveDateTime};
-use rusqlite::Connection;
-mod birthday;
+use chrono::{Datelike, NaiveDate};
 
-fn get_db() -> Result<Connection> {
-    let db = Connection::open("test.db")?;
-    db.execute(
-        "CREATE TABLE IF NOT EXISTS birthdays (
-             id INTEGER PRIMARY KEY,
-             name TEXT NOT NULL,
-             date_timestamp INTEGER NOT NULL
-         ) STRICT",
-        (),
-    )?;
-    Ok(db)
+pub fn add(name: String, date: String) -> Result<()> {
+    birthday_store::add(name, date)
 }
 
-fn to_timestamp(date: NaiveDate) -> i64 {
-    date.and_hms_opt(0, 0, 0).unwrap().timestamp()
+pub fn get_all() -> Result<Vec<Birthday>> {
+    birthday_store::get_all()
 }
 
-fn from_timestamp(timestamp: i64) -> NaiveDate {
-    NaiveDateTime::from_timestamp_opt(timestamp, 0)
-        .unwrap()
-        .date()
-}
-
-pub fn add_birthday(name: String, date: String) -> Result<()> {
-    let db = get_db()?;
-    let date = NaiveDate::parse_from_str(&date, "%Y-%m-%d")?;
-    let timestamp = to_timestamp(date);
-    db.execute(
-        "INSERT INTO birthdays(name, date_timestamp) VALUES(?1, ?2)",
-        (name, timestamp),
-    )?;
-    Ok(())
-}
-
-pub fn get_all_birthdays() -> Result<Vec<Birthday>> {
-    let db = get_db()?;
-    let mut statement = db.prepare("SELECT id, name, date_timestamp FROM birthdays")?;
-    let birthday_iter = statement.query_map([], |row| {
-        let id = row.get(0)?;
-        let name = row.get(1)?;
-        let timestamp = row.get(2)?;
-        let date = from_timestamp(timestamp);
-        Ok(Birthday { id, name, date })
-    })?;
-    let birthdays: Result<Vec<Birthday>, rusqlite::Error> = birthday_iter.collect();
-    Ok(birthdays.unwrap())
-}
-
-pub fn get_next_birthday(today: NaiveDate) -> Result<Option<Birthday>> {
-    let mut birthdays = get_all_birthdays()?;
+pub fn get_next(today: NaiveDate) -> Result<Option<Birthday>> {
+    let mut birthdays = birthday_store::get_all()?;
     birthdays.sort_by_key(|birthday| birthday.next(today));
     Ok(birthdays.into_iter().next())
 }
 
-pub fn search_birthdays(
+pub fn search(
     name: Option<String>,
     year: Option<i32>,
     month: Option<u32>,
     day: Option<u32>,
 ) -> Result<Vec<Birthday>> {
-    let mut birthdays = get_all_birthdays()?;
+    let mut birthdays = birthday_store::get_all()?;
 
     if let Some(name) = name {
         birthdays.retain(|birthday| birthday.name.contains(&name));
