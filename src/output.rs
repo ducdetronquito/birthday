@@ -45,6 +45,10 @@ impl DisplayedBirthday {
 }
 
 pub fn output(birthdays: Vec<Birthday>, today: NaiveDate) {
+    if birthdays.is_empty() {
+        println!("No birthday found 🔎");
+        return;
+    }
     let mut displayed_birthdays: Vec<DisplayedBirthday> = birthdays
         .iter()
         .map(|birthday| DisplayedBirthday::from_birthday(birthday, today))
