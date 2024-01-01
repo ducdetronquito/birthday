@@ -20,6 +20,10 @@ impl Birthday {
             birthday_next_year
         }
     }
+
+    pub fn is_today(&self, today: NaiveDate) -> bool {
+        self.date.month() == today.month() && self.date.day() == today.day()
+    }
 }
 
 #[cfg(test)]
@@ -67,5 +71,20 @@ mod tests {
             birthday.next(today),
             NaiveDate::from_ymd_opt(2025, 5, 3).unwrap()
         )
+    }
+
+    #[test]
+    fn test_is_today() {
+        let birthday = Birthday {
+            id: 1,
+            name: "Ben Dover".to_string(),
+            date: NaiveDate::from_ymd_opt(1990, 5, 3).unwrap(),
+        };
+
+        assert!(birthday.is_today(NaiveDate::from_ymd_opt(2024, 5, 3).unwrap()));
+
+        assert!(!birthday.is_today(NaiveDate::from_ymd_opt(2024, 5, 4).unwrap()));
+
+        assert!(!birthday.is_today(NaiveDate::from_ymd_opt(2024, 6, 3).unwrap()));
     }
 }

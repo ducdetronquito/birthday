@@ -1,5 +1,5 @@
+mod output;
 use anyhow::Result;
-use birthday::Birthday;
 use chrono::{Datelike, Utc};
 use clap::{Parser, Subcommand};
 
@@ -38,19 +38,18 @@ enum Command {
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    println!("You ran cli with: {:?}", cli);
+    let today = Utc::now().date_naive();
     match cli.command {
         Command::Add { name, date } => birthday::add(name, date),
         Command::All {} => {
             let birthdays = birthday::get_all()?;
-            print_birthdays(birthdays);
+            output::output(birthdays, today);
             Ok(())
         }
         Command::Next {} => {
-            let today = Utc::now().date_naive();
             let maybe_birthday = birthday::get_next(today)?;
             if let Some(birthday) = maybe_birthday {
-                print_birthdays(vec![birthday]);
+                output::output(vec![birthday], today);
             }
             Ok(())
         }
@@ -61,7 +60,7 @@ fn main() -> Result<()> {
             day,
         } => {
             let birthdays = birthday::search(name, year, month, day)?;
-            print_birthdays(birthdays);
+            output::output(birthdays, today);
             Ok(())
         }
         Command::Today {} => {
@@ -72,22 +71,8 @@ fn main() -> Result<()> {
                 Some(today.month()),
                 Some(today.day()),
             )?;
-            print_birthdays(birthdays);
+            output::output(birthdays, today);
             Ok(())
         }
-    }
-}
-
-fn print_birthdays(birthdays: Vec<Birthday>) {
-    let today = Utc::now().date_naive();
-    for birthday in birthdays {
-        let age = match birthday.age(today) {
-            Some(age) => age.to_string(),
-            None => "".to_owned(),
-        };
-        println!(
-            "Name={} Birthdate={} Age={}",
-            birthday.name, birthday.date, age
-        );
     }
 }
