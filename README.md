@@ -5,7 +5,7 @@ CLI tool to remember birthdays of people you know
 ## Usage
 
 ```shell
-# Add some person's birthdays
+# Add someone's birthday
 $ birthday add "Ben Dover" 03/05/1990
 $ birthday add "Hugh Jarse" 10/12/1995
 $ birthday add "Anita Bath" 22/09/1987
