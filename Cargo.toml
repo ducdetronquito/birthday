@@ -1,7 +1,20 @@
 [package]
 name = "birthday"
+description = "🎂 CLI tool to remember birthdays of people you know"
 version = "0.1.0"
 edition = "2021"
+authors = ["ducdetronquito <guillaume.paulet@giome.fr>"]
+license = "Unlicense"
+homepage = "https://github.com/ducdetronquito/birthday"
+repository = "https://github.com/ducdetronquito/birthday"
+readme = "README.md"
+keywords = ["birthday"]
+categories = [
+  "command-line-utilities"
+]
+
+[[bin]]
+name = "birthday"
 
 [dependencies]
 anyhow = "1.0.76"
