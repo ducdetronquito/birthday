@@ -19,10 +19,14 @@ pub fn add(name: String, date: String) -> Result<()> {
 }
 
 fn get_db_path() -> Result<PathBuf> {
-    let mut data_dir = match ProjectDirs::from("", "", "birthday") {
-        Some(project_dirs) => project_dirs.data_dir().to_owned(),
-        None => Path::new("./").to_owned(),
+    let mut data_dir = match std::env::var("BIRTHDAY_DATA") {
+        Ok(path) => PathBuf::from(path),
+        Err(_) => match ProjectDirs::from("", "", "birthday") {
+            Some(project_dirs) => project_dirs.data_dir().to_owned(),
+            None => Path::new("./").to_owned(),
+        },
     };
+
     std::fs::create_dir_all(&data_dir)?;
     data_dir.push("test.db");
     Ok(data_dir)
