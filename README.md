@@ -2,7 +2,17 @@
 
 CLI tool to remember birthdays of people you know
 
+## Installation
+
+```shell
+cargo install birthday
+```
+
 ## Usage
+
+Birthdays are stored in a SQLite database located in the [standard data directory](https://dirs.dev/)
+of your OS, but you can also override this behavior by defining a custom path via the `BIRTHDAY_DATA` environment variable. 
+
 
 ```shell
 # Add someone's birthday
