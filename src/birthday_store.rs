@@ -1,5 +1,8 @@
+use std::path::{Path, PathBuf};
+
 use anyhow::Result;
 use chrono::{NaiveDate, NaiveDateTime};
+use directories::ProjectDirs;
 use rusqlite::Connection;
 
 use crate::Birthday;
@@ -13,6 +16,16 @@ pub fn add(name: String, date: String) -> Result<()> {
         (name, timestamp),
     )?;
     Ok(())
+}
+
+fn get_db_path() -> Result<PathBuf> {
+    let mut data_dir = match ProjectDirs::from("", "", "birthday") {
+        Some(project_dirs) => project_dirs.data_dir().to_owned(),
+        None => Path::new("./").to_owned(),
+    };
+    std::fs::create_dir_all(&data_dir)?;
+    data_dir.push("test.db");
+    Ok(data_dir)
 }
 
 pub fn get_all() -> Result<Vec<Birthday>> {
@@ -49,7 +62,8 @@ pub fn remove(id: i32) -> Result<Option<Birthday>> {
 }
 
 fn get_db() -> Result<Connection> {
-    let db = Connection::open("test.db")?;
+    let db_path = get_db_path()?;
+    let db = Connection::open(db_path)?;
     db.execute(
         "CREATE TABLE IF NOT EXISTS birthdays (
              id INTEGER PRIMARY KEY,

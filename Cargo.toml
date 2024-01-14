@@ -20,5 +20,6 @@ name = "birthday"
 anyhow = "1.0.76"
 chrono = "0.4"
 clap = { version = "4.4", features = ["derive"] }
+directories = "5.0.1"
 rusqlite = { version = "0.30", features = ["bundled", "chrono"] }
 tabled = "0.15"
