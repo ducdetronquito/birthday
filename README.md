@@ -16,9 +16,9 @@ of your OS, but you can also override this behavior by defining a custom path vi
 
 ```shell
 # Add someone's birthday
-$ birthday add "Ben Dover" 03/05/1990
-$ birthday add "Hugh Jarse" 10/12/1995
-$ birthday add "Anita Bath" 22/09/1987
+$ birthday add "Ben Dover" 03 05 1990
+$ birthday add "Hugh Jarse" 10 12 1995
+$ birthday add "Anita Bath" 22 09 1987
 
 # Show all birthdays
 $ birthday all

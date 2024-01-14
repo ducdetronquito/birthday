@@ -14,7 +14,13 @@ struct Cli {
 #[derive(Subcommand, Debug)]
 enum Command {
     #[command(about = "Add a person's birthday")]
-    Add { name: String, date: String },
+    Add {
+        name: String,
+        day: u32,
+        month: u32,
+        #[arg(allow_negative_numbers = true)]
+        year: i32,
+    },
     #[command(about = "Show all birthdays")]
     All {},
     #[command(about = "Show the next birthday")]
@@ -42,7 +48,12 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     let today = Utc::now().date_naive();
     match cli.command {
-        Command::Add { name, date } => birthday::add(name, date),
+        Command::Add {
+            name,
+            day,
+            month,
+            year,
+        } => birthday::add(name, day, month, year),
         Command::All {} => {
             let birthdays = birthday::get_all()?;
             output::output(birthdays, today);

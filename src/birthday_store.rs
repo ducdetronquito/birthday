@@ -7,9 +7,8 @@ use rusqlite::Connection;
 
 use crate::Birthday;
 
-pub fn add(name: String, date: String) -> Result<()> {
+pub fn add(name: String, date: NaiveDate) -> Result<()> {
     let db = get_db()?;
-    let date = NaiveDate::parse_from_str(&date, "%Y-%m-%d")?;
     let timestamp = to_timestamp(date);
     db.execute(
         "INSERT INTO birthdays(name, date_timestamp) VALUES(?1, ?2)",

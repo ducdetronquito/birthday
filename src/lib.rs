@@ -4,8 +4,9 @@ use anyhow::{bail, Result};
 pub use birthday::Birthday;
 use chrono::{Datelike, NaiveDate};
 
-pub fn add(name: String, date: String) -> Result<()> {
-    birthday_store::add(name, date)
+pub fn add(name: String, day: u32, month: u32, year: i32) -> Result<()> {
+    let birthdate = NaiveDate::from_ymd_opt(year, month, day).expect("Invalid date");
+    birthday_store::add(name, birthdate)
 }
 
 pub fn get_all() -> Result<Vec<Birthday>> {
